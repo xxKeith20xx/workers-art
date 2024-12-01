@@ -7,3 +7,11 @@ preview_urls = false
 [[routes]]
 pattern = "p5-js.martinelli.dev"
 zone_name = "martinelli.dev"
+
+[observability]
+enabled = true
+head_sampling_rate = 1 # optional. default = 1.
+
+[placement]
+mode = "smart"
+
