@@ -8,23 +8,23 @@ async function handleRequest(request) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>p5.js Cloudflare Worker Sketch</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 </head>
 <style>
     body {
-      margin: 0;
-      background-color: black;
+	margin: 0;
+	background-color: black;
+	overflow: hidden;
     }
   </style>
 
 <script>
   let noiseY;
   let noiseSpeed = 0.05;
-  let noiseHeight = 25;
+  let noiseHeight = 50;
   let img;
-  let imgWidth, imgHeight;
   let offset = 0;
   let easing = 0.05;
 
@@ -38,13 +38,6 @@ async function handleRequest(request) {
     noiseY = height * 3 / 4;
   }
 
-
-	function resizeImage() {
-	// Resize the image to match the canvas size
-	imgWidth = width;
-	imgHeight = height;
-	}
-
   function draw() {
     // Part 1: Background and Noise
     background(0, 15);
@@ -54,14 +47,14 @@ async function handleRequest(request) {
     for (let i = 0; i < 10; i++) {
       let xrandom = random(width);
       let yrandom = random(height / 2);
-      ellipse(xrandom, yrandom, 3, 3);
+	ellipse(xrandom, yrandom, width / 100, width / 100);
     }
 
     for (let j = 0; j < 3; j++) {
       let offsetY = j * 100;
       noFill();
-      stroke(0, 0, 255, 10);
-      strokeWeight(height / 2);
+      stroke(0, 0, 255, 100);
+      strokeWeight(height / 3);
       beginShape();
       curveVertex(0, height / 2);
       for (let i = 0; i < width; i += 50) {
@@ -75,29 +68,19 @@ async function handleRequest(request) {
     // Part 2: Image with Movement
     // Display the bottom image at full opacity.
     tint(255, 255);
-	image(img, 0, 0, imgWidth, imgHeight);
+    image(img, width / 2, height / 2, width / 2, height / 2); // Scale image
 
     // Define dx as the rate at which the top image
     // moves with the cursor. The offset variable
     // delays the movement of the image.
-    let dx = mouseX - img.width / 2 - offset;
+    let dx = (mouseX || touches[0]?.x || width / 2) - img.width / 50 - offset;
     offset += dx * easing;
 
     // Display the top image at half opacity.
     tint(255, 127);
-	image(img, offset, 0, imgWidth, imgHeight);
-  }
-function windowResized() {
-    // Adjust canvas and image size when the window is resized
-    resizeCanvas(windowWidth, windowHeight);
-    resizeImage();
+    image(img, offset, height / 10, width / 4, height / 4); // Scale top image
   }
 
-  function resizeImage() {
-    // Resize the image to match the canvas size
-    imgWidth = width;
-    imgHeight = height;
-  }
 </script>
 
 </body>
