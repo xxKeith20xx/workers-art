@@ -21,6 +21,7 @@ async function handleRequest(request) {
   </style>
 
 <script>
+  alert("keith!");
   let noiseY;
   let noiseSpeed = 0.05;
   let noiseHeight = 50;
