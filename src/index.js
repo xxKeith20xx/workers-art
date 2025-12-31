@@ -25,11 +25,15 @@ async function handleRequest(request) {
 let img;
 let pg; // Off-screen graphics buffer for feedback effect
 let particles = [];
+let stars = [];
+let shootingStars = [];
 let kaleidoscopeSegments = 8;
 let hueShift = 0;
 let noiseScale = 0.005;
 let time = 0;
 let ripples = [];
+let goldenRatio = 1.618033988749;
+let nebulaOffset = 0;
 
 function preload() {
   img = loadImage('https://imagedelivery.net/baAa4fwjctZfuBzZ3hvtGA/59a00d14-cc58-4c62-e9c1-fc4d1184f900/public');
@@ -46,6 +50,11 @@ function setup() {
   // Initialize particles
   for (let i = 0; i < 150; i++) {
     particles.push(new Particle());
+  }
+  
+  // Initialize starfield with depth layers
+  for (let i = 0; i < 300; i++) {
+    stars.push(new Star());
   }
 }
 
