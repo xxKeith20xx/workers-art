@@ -59,22 +59,34 @@ function setup() {
 }
 
 function draw() {
-  time += 0.01;
-  hueShift = (hueShift + 0.5) % 360;
+  time += 0.008;
+  nebulaOffset += 0.002;
+  hueShift = (hueShift + 0.3) % 360;
 
-  // Feedback: draw previous frame slightly scaled and rotated for trails
+  // Deeper feedback: draw previous frame scaled and rotated for hypnotic tunnel
   push();
   translate(width/2, height/2);
-  rotate(0.003);
-  scale(1.005);
-  tint(0, 0, 100, 85);
+  rotate(sin(time * 0.3) * 0.005);
+  scale(1.008);
+  tint(0, 0, 100, 92);
   image(pg, 0, 0);
   pop();
 
-  // Dark overlay for fade effect
+  // Subtle dark overlay
   noStroke();
-  fill(0, 0, 0, 8);
+  fill(0, 0, 0, 5);
   rect(0, 0, width, height);
+  
+  // Draw space background elements
+  drawNebula();
+  drawStarfield();
+  updateShootingStars();
+
+  // Draw sacred geometry behind kaleidoscope
+  drawSacredGeometry();
+  
+  // Draw fractal spirals
+  drawFractalSpirals();
 
   // Draw kaleidoscope of the image
   drawKaleidoscope();
@@ -96,6 +108,11 @@ function draw() {
 
   // Copy current frame to buffer for feedback
   pg.image(get(), width/2, height/2);
+  
+  // Randomly spawn shooting stars
+  if (random() < 0.02) {
+    shootingStars.push(new ShootingStar());
+  }
 }
 
 function drawKaleidoscope() {
