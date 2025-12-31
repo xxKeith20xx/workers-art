@@ -744,7 +744,8 @@ class ShootingStar {
 </body>
 </html>`;
 
-  return new Response(html, {
-    headers: { "content-type": "text/html" },
-  });
-}
+    return new Response(html, {
+      headers: { "content-type": "text/html" },
+    });
+  }
+};
