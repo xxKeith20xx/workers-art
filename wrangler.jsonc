@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "art",
+  "main": "src/index.js",
+  "compatibility_date": "2024-12-01",
+  "workers_dev": true,
+  "preview_urls": false,
+
+  "routes": [
+    {
+      "pattern": "p5-js.martinelli.dev",
+      "zone_name": "martinelli.dev"
+    }
+  ],
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
