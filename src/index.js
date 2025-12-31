@@ -10,7 +10,7 @@ async function handleRequest(request) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>https://p5-js.martinelli.dev/</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
 </head>
 <style>
   body {
@@ -23,6 +23,7 @@ async function handleRequest(request) {
 
 <script>
 let img;
+let silverSurfer;
 let pg; // Off-screen graphics buffer for feedback effect
 let particles = [];
 let stars = [];
@@ -34,9 +35,13 @@ let time = 0;
 let ripples = [];
 let goldenRatio = 1.618033988749;
 let nebulaOffset = 0;
+let surferX, surferY, surferAngle = 0;
+let surferPath = []; // Trail behind Silver Surfer
 
 function preload() {
   img = loadImage('https://imagedelivery.net/baAa4fwjctZfuBzZ3hvtGA/59a00d14-cc58-4c62-e9c1-fc4d1184f900/public');
+  // Silver Surfer - replace with your own Cloudflare Images URL if needed
+  silverSurfer = loadImage('https://upload.wikimedia.org/wikipedia/en/5/5f/Silver_Surfer.png');
 }
 
 function setup() {
@@ -52,10 +57,14 @@ function setup() {
     particles.push(new Particle());
   }
   
-  // Initialize starfield with depth layers
-  for (let i = 0; i < 300; i++) {
+  // Initialize starfield with depth layers - MORE STARS!
+  for (let i = 0; i < 800; i++) {
     stars.push(new Star());
   }
+  
+  // Initialize Silver Surfer position
+  surferX = width * 0.2;
+  surferY = height * 0.5;
 }
 
 function draw() {
@@ -81,6 +90,9 @@ function draw() {
   drawNebula();
   drawStarfield();
   updateShootingStars();
+  
+  // Draw Silver Surfer soaring through the cosmos
+  drawSilverSurfer();
 
   // Draw sacred geometry behind kaleidoscope
   drawSacredGeometry();
@@ -205,6 +217,81 @@ function updateShootingStars() {
     if (s.isDead()) {
       shootingStars.splice(i, 1);
     }
+  }
+}
+
+// Silver Surfer soaring through the cosmos
+function drawSilverSurfer() {
+  // Smooth figure-8 / infinity path through space
+  let pathSpeed = 0.3;
+  let targetX = width/2 + sin(time * pathSpeed) * width * 0.35;
+  let targetY = height/2 + sin(time * pathSpeed * 2) * height * 0.25;
+  
+  // Smooth movement towards target
+  surferX += (targetX - surferX) * 0.02;
+  surferY += (targetY - surferY) * 0.02;
+  
+  // Calculate angle based on movement direction
+  let dx = targetX - surferX;
+  let dy = targetY - surferY;
+  let targetAngle = atan2(dy, dx);
+  surferAngle += (targetAngle - surferAngle) * 0.1;
+  
+  // Store path for cosmic trail
+  surferPath.push({x: surferX, y: surferY, hue: hueShift});
+  if (surferPath.length > 60) surferPath.shift();
+  
+  // Draw cosmic energy trail
+  noFill();
+  for (let i = 0; i < surferPath.length - 1; i++) {
+    let p = surferPath[i];
+    let alpha = map(i, 0, surferPath.length, 0, 50);
+    let weight = map(i, 0, surferPath.length, 1, 8);
+    let h = (p.hue + i * 2) % 360;
+    
+    stroke(h, 70, 100, alpha);
+    strokeWeight(weight);
+    
+    let p2 = surferPath[i + 1];
+    line(p.x, p.y, p2.x, p2.y);
+    
+    // Add sparkles along trail
+    if (i % 5 === 0) {
+      noStroke();
+      fill(h, 50, 100, alpha * 0.8);
+      let sparkleSize = random(3, 8);
+      ellipse(p.x + random(-10, 10), p.y + random(-10, 10), sparkleSize, sparkleSize);
+    }
+  }
+  
+  // Draw Silver Surfer with cosmic glow
+  push();
+  translate(surferX, surferY);
+  rotate(surferAngle);
+  
+  // Outer cosmic aura
+  noStroke();
+  for (let i = 5; i > 0; i--) {
+    let h = (hueShift + i * 30 + 200) % 360; // Silver/blue tones
+    fill(h, 40, 100, 8);
+    ellipse(0, 0, 120 + i * 20, 80 + i * 15);
+  }
+  
+  // Draw the Silver Surfer image
+  tint(0, 0, 100, 90); // Silver tint
+  let surferSize = min(width, height) * 0.12;
+  image(silverSurfer, 0, 0, surferSize, surferSize * 1.5);
+  
+  // Surfboard energy glow
+  let glowH = (hueShift + 180) % 360;
+  fill(glowH, 80, 100, 30);
+  ellipse(0, surferSize * 0.4, surferSize * 0.8, 10);
+  
+  pop();
+  
+  // Power cosmic particles emanating from surfer
+  if (frameCount % 2 === 0) {
+    particles.push(new Particle(surferX, surferY, true));
   }
 }
 
