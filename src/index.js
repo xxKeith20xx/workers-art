@@ -23,7 +23,6 @@ async function handleRequest(request) {
 
 <script>
 let img;
-let silverSurfer;
 let pg; // Off-screen graphics buffer for feedback effect
 let particles = [];
 let stars = [];
@@ -36,12 +35,10 @@ let ripples = [];
 let goldenRatio = 1.618033988749;
 let nebulaOffset = 0;
 let surferX, surferY, surferAngle = 0;
-let surferPath = []; // Trail behind Silver Surfer
+let surferPath = [];
 
 function preload() {
   img = loadImage('https://imagedelivery.net/baAa4fwjctZfuBzZ3hvtGA/59a00d14-cc58-4c62-e9c1-fc4d1184f900/public');
-  // Silver Surfer - replace with your own Cloudflare Images URL if needed
-  silverSurfer = loadImage('https://upload.wikimedia.org/wikipedia/en/5/5f/Silver_Surfer.png');
 }
 
 function setup() {
@@ -91,7 +88,7 @@ function draw() {
   drawStarfield();
   updateShootingStars();
   
-  // Draw Silver Surfer soaring through the cosmos
+  // Draw the Silver Surfer (procedurally generated)
   drawSilverSurfer();
 
   // Draw sacred geometry behind kaleidoscope
@@ -220,7 +217,7 @@ function updateShootingStars() {
   }
 }
 
-// Silver Surfer soaring through the cosmos
+// Silver Surfer - procedurally drawn (no image needed)
 function drawSilverSurfer() {
   // Smooth figure-8 / infinity path through space
   let pathSpeed = 0.3;
@@ -239,58 +236,162 @@ function drawSilverSurfer() {
   
   // Store path for cosmic trail
   surferPath.push({x: surferX, y: surferY, hue: hueShift});
-  if (surferPath.length > 60) surferPath.shift();
+  if (surferPath.length > 80) surferPath.shift();
   
   // Draw cosmic energy trail
   noFill();
   for (let i = 0; i < surferPath.length - 1; i++) {
     let p = surferPath[i];
-    let alpha = map(i, 0, surferPath.length, 0, 50);
-    let weight = map(i, 0, surferPath.length, 1, 8);
-    let h = (p.hue + i * 2) % 360;
+    let alpha = map(i, 0, surferPath.length, 0, 60);
+    let weight = map(i, 0, surferPath.length, 1, 6);
+    let h = (p.hue + i * 3 + 200) % 360; // Silver/cosmic blue tones
     
-    stroke(h, 70, 100, alpha);
+    stroke(h, 50, 100, alpha);
     strokeWeight(weight);
     
     let p2 = surferPath[i + 1];
     line(p.x, p.y, p2.x, p2.y);
-    
-    // Add sparkles along trail
-    if (i % 5 === 0) {
-      noStroke();
-      fill(h, 50, 100, alpha * 0.8);
-      let sparkleSize = random(3, 8);
-      ellipse(p.x + random(-10, 10), p.y + random(-10, 10), sparkleSize, sparkleSize);
-    }
   }
   
-  // Draw Silver Surfer with cosmic glow
+  // Draw the Silver Surfer figure
   push();
   translate(surferX, surferY);
-  rotate(surferAngle);
+  rotate(surferAngle + HALF_PI); // Rotate so he faces forward
   
-  // Outer cosmic aura
+  let scale = min(width, height) * 0.001; // Base scale factor
+  
+  // Outer cosmic aura / power cosmic glow
   noStroke();
-  for (let i = 5; i > 0; i--) {
-    let h = (hueShift + i * 30 + 200) % 360; // Silver/blue tones
-    fill(h, 40, 100, 8);
-    ellipse(0, 0, 120 + i * 20, 80 + i * 15);
+  for (let i = 6; i > 0; i--) {
+    let h = (hueShift + 200 + i * 15) % 360;
+    fill(h, 30, 100, 6);
+    ellipse(0, 0, 150 * scale * i, 200 * scale * i);
   }
   
-  // Draw the Silver Surfer image
-  tint(0, 0, 100, 90); // Silver tint
-  let surferSize = min(width, height) * 0.12;
-  image(silverSurfer, 0, 0, surferSize, surferSize * 1.5);
+  // === SURFBOARD ===
+  // Main board shape - elongated ellipse with metallic sheen
+  fill(210, 10, 95, 90); // Silver color
+  stroke(210, 20, 70, 80);
+  strokeWeight(2);
+  ellipse(0, 80 * scale, 30 * scale, 120 * scale);
   
-  // Surfboard energy glow
+  // Board highlight
+  noStroke();
+  fill(0, 0, 100, 40);
+  ellipse(-5 * scale, 70 * scale, 8 * scale, 60 * scale);
+  
+  // Board energy glow
   let glowH = (hueShift + 180) % 360;
-  fill(glowH, 80, 100, 30);
-  ellipse(0, surferSize * 0.4, surferSize * 0.8, 10);
+  fill(glowH, 70, 100, 25);
+  ellipse(0, 80 * scale, 40 * scale, 130 * scale);
+  
+  // === BODY ===
+  // Torso - muscular silver form
+  fill(210, 15, 90, 95);
+  stroke(210, 25, 60, 70);
+  strokeWeight(1.5);
+  
+  // Torso
+  beginShape();
+  curveVertex(-18 * scale, -20 * scale);
+  curveVertex(-15 * scale, -30 * scale);
+  curveVertex(-12 * scale, 20 * scale);
+  curveVertex(0, 35 * scale);
+  curveVertex(12 * scale, 20 * scale);
+  curveVertex(15 * scale, -30 * scale);
+  curveVertex(18 * scale, -20 * scale);
+  endShape(CLOSE);
+  
+  // Torso highlight (metallic sheen)
+  noStroke();
+  fill(0, 0, 100, 30);
+  ellipse(-5 * scale, 0, 8 * scale, 40 * scale);
+  
+  // === HEAD ===
+  fill(210, 15, 92, 95);
+  stroke(210, 25, 60, 70);
+  strokeWeight(1.5);
+  ellipse(0, -45 * scale, 22 * scale, 28 * scale);
+  
+  // Head highlight
+  noStroke();
+  fill(0, 0, 100, 35);
+  ellipse(-4 * scale, -48 * scale, 8 * scale, 12 * scale);
+  
+  // === ARMS ===
+  stroke(210, 25, 60, 70);
+  strokeWeight(1.5);
+  fill(210, 15, 88, 95);
+  
+  // Left arm - reaching forward
+  beginShape();
+  curveVertex(-25 * scale, -15 * scale);
+  curveVertex(-15 * scale, -20 * scale);
+  curveVertex(-25 * scale, -35 * scale);
+  curveVertex(-30 * scale, -50 * scale);
+  curveVertex(-28 * scale, -55 * scale);
+  curveVertex(-25 * scale, -50 * scale);
+  curveVertex(-20 * scale, -35 * scale);
+  curveVertex(-12 * scale, -18 * scale);
+  curveVertex(-20 * scale, -10 * scale);
+  endShape(CLOSE);
+  
+  // Right arm - back for balance
+  beginShape();
+  curveVertex(25 * scale, -5 * scale);
+  curveVertex(15 * scale, -15 * scale);
+  curveVertex(22 * scale, -25 * scale);
+  curveVertex(35 * scale, -20 * scale);
+  curveVertex(38 * scale, -18 * scale);
+  curveVertex(35 * scale, -15 * scale);
+  curveVertex(20 * scale, -20 * scale);
+  curveVertex(12 * scale, -12 * scale);
+  curveVertex(20 * scale, 0 * scale);
+  endShape(CLOSE);
+  
+  // === LEGS ===
+  // Left leg - bent on board
+  beginShape();
+  curveVertex(-5 * scale, 50 * scale);
+  curveVertex(-8 * scale, 30 * scale);
+  curveVertex(-15 * scale, 45 * scale);
+  curveVertex(-12 * scale, 65 * scale);
+  curveVertex(-8 * scale, 70 * scale);
+  curveVertex(-5 * scale, 65 * scale);
+  curveVertex(-10 * scale, 45 * scale);
+  curveVertex(-5 * scale, 32 * scale);
+  curveVertex(0, 45 * scale);
+  endShape(CLOSE);
+  
+  // Right leg - extended back
+  beginShape();
+  curveVertex(5 * scale, 50 * scale);
+  curveVertex(8 * scale, 30 * scale);
+  curveVertex(18 * scale, 50 * scale);
+  curveVertex(20 * scale, 75 * scale);
+  curveVertex(18 * scale, 80 * scale);
+  curveVertex(15 * scale, 75 * scale);
+  curveVertex(15 * scale, 50 * scale);
+  curveVertex(5 * scale, 32 * scale);
+  curveVertex(0, 45 * scale);
+  endShape(CLOSE);
+  
+  // === COSMIC ENERGY EFFECTS ===
+  // Energy crackling around hands
+  noFill();
+  for (let i = 0; i < 3; i++) {
+    let eh = (hueShift + 180 + i * 40) % 360;
+    stroke(eh, 60, 100, 40);
+    strokeWeight(1);
+    let handX = -28 * scale + random(-5, 5) * scale;
+    let handY = -52 * scale + random(-5, 5) * scale;
+    ellipse(handX, handY, random(10, 20) * scale, random(10, 20) * scale);
+  }
   
   pop();
   
-  // Power cosmic particles emanating from surfer
-  if (frameCount % 2 === 0) {
+  // Spawn cosmic particles from surfer
+  if (frameCount % 3 === 0) {
     particles.push(new Particle(surferX, surferY, true));
   }
 }
