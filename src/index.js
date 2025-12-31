@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Psychedelic Vision</title>
+  <title>https://p5-js.martinelli.dev/</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
 </head>
 <style>
@@ -42,7 +42,7 @@ function setup() {
   pg.colorMode(HSB, 360, 100, 100, 100);
   imageMode(CENTER);
   pg.imageMode(CENTER);
-  
+
   // Initialize particles
   for (let i = 0; i < 150; i++) {
     particles.push(new Particle());
@@ -52,7 +52,7 @@ function setup() {
 function draw() {
   time += 0.01;
   hueShift = (hueShift + 0.5) % 360;
-  
+
   // Feedback: draw previous frame slightly scaled and rotated for trails
   push();
   translate(width/2, height/2);
@@ -61,30 +61,30 @@ function draw() {
   tint(0, 0, 100, 85);
   image(pg, 0, 0);
   pop();
-  
+
   // Dark overlay for fade effect
   noStroke();
   fill(0, 0, 0, 8);
   rect(0, 0, width, height);
-  
+
   // Draw kaleidoscope of the image
   drawKaleidoscope();
-  
+
   // Draw flowing energy waves
   drawEnergyWaves();
-  
+
   // Update and draw particles
   for (let p of particles) {
     p.update();
     p.display();
   }
-  
+
   // Draw ripples
   updateRipples();
-  
+
   // Draw mouse trail / cursor effect
   drawCursor();
-  
+
   // Copy current frame to buffer for feedback
   pg.image(get(), width/2, height/2);
 }
@@ -92,35 +92,35 @@ function draw() {
 function drawKaleidoscope() {
   let segments = kaleidoscopeSegments;
   let angle = TWO_PI / segments;
-  
+
   push();
   translate(width/2, height/2);
-  
+
   // Pulsing scale based on noise
   let pulse = map(noise(time * 2), 0, 1, 0.8, 1.2);
   let breathe = sin(time * 0.5) * 0.1 + 1;
-  
+
   for (let i = 0; i < segments; i++) {
     push();
     rotate(angle * i + time * 0.1);
-    
+
     // Mirror every other segment
     if (i % 2 === 1) {
       scale(-1, 1);
     }
-    
+
     // Apply psychedelic tint - cycle through rainbow
     let h = (hueShift + i * (360 / segments)) % 360;
     tint(h, 70, 100, 60);
-    
+
     // Distort image position with noise
     let offsetX = noise(time + i) * 50 - 25;
     let offsetY = noise(time + i + 100) * 50 - 25;
-    
+
     // Draw the image slice
     let imgSize = min(width, height) * 0.4 * pulse * breathe;
     image(img, offsetX, offsetY, imgSize, imgSize);
-    
+
     pop();
   }
   pop();
@@ -128,15 +128,15 @@ function drawKaleidoscope() {
 
 function drawEnergyWaves() {
   noFill();
-  
+
   for (let wave = 0; wave < 5; wave++) {
     let h = (hueShift + wave * 60) % 360;
     stroke(h, 80, 100, 40);
     strokeWeight(2 + wave);
-    
+
     beginShape();
     for (let x = 0; x <= width; x += 10) {
-      let y = height/2 + 
+      let y = height/2 +
               sin(x * 0.01 + time * 2 + wave) * 100 +
               noise(x * noiseScale, time + wave) * 150 - 75;
       curveVertex(x, y);
@@ -148,7 +148,7 @@ function drawEnergyWaves() {
 function drawCursor() {
   let mx = mouseX || width/2;
   let my = mouseY || height/2;
-  
+
   // Glowing orb at cursor
   for (let i = 5; i > 0; i--) {
     let h = (hueShift + i * 20) % 360;
@@ -156,7 +156,7 @@ function drawCursor() {
     noStroke();
     ellipse(mx, my, i * 30, i * 30);
   }
-  
+
   // Trailing particles from cursor
   if (frameCount % 3 === 0) {
     particles.push(new Particle(mx, my, true));
@@ -171,12 +171,12 @@ function updateRipples() {
     let r = ripples[i];
     r.radius += 5;
     r.alpha -= 2;
-    
+
     if (r.alpha <= 0) {
       ripples.splice(i, 1);
       continue;
     }
-    
+
     noFill();
     stroke((hueShift + r.radius) % 360, 80, 100, r.alpha);
     strokeWeight(3);
@@ -192,7 +192,7 @@ function mousePressed() {
     radius: 10,
     alpha: 100
   });
-  
+
   // Burst of particles
   for (let i = 0; i < 20; i++) {
     particles.push(new Particle(mouseX, mouseY, true));
@@ -234,7 +234,7 @@ class Particle {
     this.fromMouse = fromMouse;
     this.noiseOffset = random(1000);
   }
-  
+
   update() {
     if (this.fromMouse) {
       this.life -= 3;
@@ -246,44 +246,44 @@ class Particle {
         this.pos.y * noiseScale,
         time
       ) * TWO_PI * 4;
-      
+
       this.acc = p5.Vector.fromAngle(angle).mult(0.5);
       this.vel.add(this.acc);
       this.vel.limit(3);
-      
+
       // Attract towards center slightly
       let center = createVector(width/2, height/2);
       let toCenter = p5.Vector.sub(center, this.pos);
       toCenter.mult(0.0005);
       this.vel.add(toCenter);
     }
-    
+
     this.pos.add(this.vel);
     this.hue = (this.hue + 1) % 360;
-    
+
     // Wrap around edges
     if (this.pos.x < 0) this.pos.x = width;
     if (this.pos.x > width) this.pos.x = 0;
     if (this.pos.y < 0) this.pos.y = height;
     if (this.pos.y > height) this.pos.y = 0;
   }
-  
+
   display() {
     if (this.fromMouse && this.life <= 0) return;
-    
+
     let alpha = this.fromMouse ? this.life / 255 * 80 : 60;
     let h = (this.hue + hueShift) % 360;
-    
+
     noStroke();
     fill(h, 80, 100, alpha);
-    
+
     // Draw with glow effect
     for (let i = 3; i > 0; i--) {
       fill(h, 80, 100, alpha / i);
       ellipse(this.pos.x, this.pos.y, this.size * i, this.size * i);
     }
   }
-  
+
   isDead() {
     return this.fromMouse && this.life <= 0;
   }
