@@ -8,7 +8,7 @@
 
   "routes": [
     {
-      "pattern": "p5-js.martinelli.dev",
+      "pattern": "workers-art.martinelli.dev",
       "zone_name": "martinelli.dev"
     }
   ],
