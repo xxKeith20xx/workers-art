@@ -16,12 +16,28 @@ export default {
       html, body { margin: 0; min-height: 100%; overflow: hidden; background: #030718; }
       body { touch-action: none; }
       canvas { display: block; cursor: crosshair; }
+      #cat-character {
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        width: 240px;
+        max-width: none;
+        pointer-events: none;
+        user-select: none;
+        opacity: 0;
+        filter: brightness(1.5) contrast(1.22) drop-shadow(0 0 16px rgba(118, 242, 255, 0.95));
+        transition: opacity 220ms ease;
+        will-change: transform, left, top;
+      }
+      #cat-character.is-loaded { opacity: 1; }
     </style>
   </head>
   <body>
+    <img id="cat-character" src="${catImageUrl}" alt="A black cat exploring the cosmic shore">
     <script>
       const catImageUrl = ${JSON.stringify(catImageUrl)};
-      let catImage;
+      let catElement;
       let cat;
       let target;
       let stars = [];
@@ -30,18 +46,23 @@ export default {
       let hasInteracted = false;
       let catImageLoaded = false;
 
-      function preload() {
-        catImage = loadImage(
-          catImageUrl,
-          () => { catImageLoaded = true; },
-          () => { catImageLoaded = false; }
-        );
-      }
-
       function setup() {
         createCanvas(windowWidth, windowHeight);
         pixelDensity(min(2, window.devicePixelRatio || 1));
         colorMode(HSB, 360, 100, 100, 100);
+        catElement = document.getElementById("cat-character");
+        catElement.addEventListener("load", () => {
+          catImageLoaded = true;
+          catElement.classList.add("is-loaded");
+        });
+        catElement.addEventListener("error", () => {
+          catImageLoaded = false;
+          catElement.classList.remove("is-loaded");
+        });
+        if (catElement.complete && catElement.naturalWidth > 0) {
+          catImageLoaded = true;
+          catElement.classList.add("is-loaded");
+        }
         resetScene();
       }
 
@@ -211,23 +232,19 @@ export default {
           fill(183, 75, 100, map(glow, size * 1.3, size * 0.38, 2, 12));
           ellipse(0, size * 0.24, glow * 1.45, glow * 0.42);
         }
-        imageMode(CENTER);
-        if (catImageLoaded && catImage && catImage.width > 1) {
-          // The source cat is black, so a moonlit edge keeps the actual photo
-          // distinct from the night ocean without changing the image itself.
-          drawingContext.save();
-          drawingContext.shadowColor = "rgba(118, 242, 255, 0.95)";
-          drawingContext.shadowBlur = 24;
-          drawingContext.filter = "brightness(1.42) contrast(1.22)";
-          image(catImage, 0, -size * 0.13, size, size);
-          drawingContext.restore();
-        } else {
+        if (!catImageLoaded) {
           fill(280, 12, 11);
           ellipse(0, -size * 0.12, size * 0.72, size * 0.68);
           triangle(-size * 0.3, -size * 0.3, -size * 0.13, -size * 0.69, -size * 0.02, -size * 0.3);
           triangle(size * 0.03, -size * 0.3, size * 0.17, -size * 0.69, size * 0.32, -size * 0.3);
         }
         pop();
+        if (catImageLoaded) {
+          catElement.style.left = cat.x + "px";
+          catElement.style.top = (cat.y - size * 0.13) + "px";
+          catElement.style.width = size + "px";
+          catElement.style.transform = "translate(-50%, -50%) scale(" + facing + ", 1) rotate(" + constrain(cat.vy * 0.025, -0.11, 0.11) * facing + "rad)";
+        }
       }
 
       function addRipple(x, y, big) {
