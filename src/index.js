@@ -7,7 +7,7 @@ export default {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>https://p5-js.martinelli.dev/</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/2.3.2/p5.min.js" integrity="sha512-ng/OAtMqIV4Mbny+ffpcazmh1ll3TVgauAzXXgA+41oiZUDQd7i3NU8W6jqo1Ab6hlKdkPyxPIiceff2QfMbTg==" crossorigin="anonymous"></script>
 </head>
 <style>
   body {
