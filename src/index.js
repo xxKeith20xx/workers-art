@@ -28,9 +28,14 @@ export default {
       let sparkles = [];
       let ripples = [];
       let hasInteracted = false;
+      let catImageLoaded = false;
 
       function preload() {
-        catImage = loadImage(catImageUrl);
+        catImage = loadImage(
+          catImageUrl,
+          () => { catImageLoaded = true; },
+          () => { catImageLoaded = false; }
+        );
       }
 
       function setup() {
@@ -195,20 +200,27 @@ export default {
       }
 
       function drawCat() {
-        const size = constrain(min(width, height) * 0.29, 155, 275);
+        const size = constrain(min(width, height) * 0.36, 205, 340);
         const facing = cat.vx < -0.1 ? -1 : 1;
         push();
         translate(cat.x, cat.y + sin(cat.bob) * 5);
         scale(facing, 1);
         rotate(constrain(cat.vy * 0.025, -0.11, 0.11) * facing);
         noStroke();
-        for (let glow = size * 1.15; glow > size * 0.38; glow -= size * 0.12) {
-          fill(183, 75, 100, map(glow, size * 1.15, size * 0.38, 1, 9));
+        for (let glow = size * 1.3; glow > size * 0.38; glow -= size * 0.12) {
+          fill(183, 75, 100, map(glow, size * 1.3, size * 0.38, 2, 12));
           ellipse(0, size * 0.24, glow * 1.45, glow * 0.42);
         }
         imageMode(CENTER);
-        if (catImage && catImage.width > 1) {
+        if (catImageLoaded && catImage && catImage.width > 1) {
+          // The source cat is black, so a moonlit edge keeps the actual photo
+          // distinct from the night ocean without changing the image itself.
+          drawingContext.save();
+          drawingContext.shadowColor = "rgba(118, 242, 255, 0.95)";
+          drawingContext.shadowBlur = 24;
+          drawingContext.filter = "brightness(1.42) contrast(1.22)";
           image(catImage, 0, -size * 0.13, size, size);
+          drawingContext.restore();
         } else {
           fill(280, 12, 11);
           ellipse(0, -size * 0.12, size * 0.72, size * 0.68);
@@ -245,6 +257,9 @@ export default {
         fill(200, 16, 100, 68);
         textSize(constrain(width * 0.013, 11, 14));
         text("Guide the cat with your mouse or finger · click the water to call it", 22, 47);
+        fill(183, 52, 100, 62);
+        textSize(constrain(width * 0.011, 10, 12));
+        text(catImageLoaded ? "CAT SIGNAL: ONLINE" : "CAT SIGNAL: FINDING THE STARS", 22, 68);
         if (!hasInteracted) {
           textAlign(CENTER, CENTER);
           fill(190, 34, 100, 88);
