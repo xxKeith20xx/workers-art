@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "workers-art",
+  "account_id": "11d8f5a87547659f224b2d0410c4b1f7",
   "main": "src/index.js",
   "compatibility_date": "2026-09-02",
   "compatibility_flags": ["nodejs_compat"],
