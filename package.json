@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24"
   },
   "scripts": {
     "check": "wrangler deploy --dry-run",
@@ -12,6 +12,10 @@
     "start": "wrangler dev"
   },
   "devDependencies": {
-    "wrangler": "^4.145.0"
+    "wrangler": "^4.149.0"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "workerd": true
   }
 }
