@@ -3,20 +3,22 @@
   "name": "workers-art",
   "account_id": "11d8f5a87547659f224b2d0410c4b1f7",
   "main": "src/index.js",
-  "compatibility_date": "2026-09-02",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_date": "2026-11-23",
   "workers_dev": false,
   "preview_urls": false,
 
   "routes": [
     {
       "pattern": "workers-art.keith20.dev",
-      "zone_name": "keith20.dev"
+      "custom_domain": true
     }
   ],
 
   "observability": {
     "enabled": true,
-    "head_sampling_rate": 1
+    "head_sampling_rate": 1,
+    "redact_query_string": true,
+    "traces": { "enabled": true, "head_sampling_rate": 0.05 },
+    "issues": { "enabled": true }
   }
 }
